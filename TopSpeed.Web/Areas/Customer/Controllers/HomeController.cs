@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using TopSpeed.Domain.Models;
 
 
-namespace TopSpeed.Web.Controllers
+namespace TopSpeed.Web.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

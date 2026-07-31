@@ -1,0 +1,48 @@
+﻿@model VehicleType
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header text-center text-uppercase">
+            Vehicle Type Details
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+
+                <div class="col-md-12">
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Id</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.Id
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Vehicle Type </strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.Name
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a asp-area="Admin" asp-controller="VehicleType" asp-action="Index" class="btn btn-danger">Back</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

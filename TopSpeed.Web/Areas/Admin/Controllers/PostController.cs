@@ -1,19 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using TopSpeed.Application.ApplicationConstants;
 using TopSpeed.Application.Contracts.Presistence;
+using TopSpeed.Domain.ApplicationEnums;
 using TopSpeed.Domain.Models;
+using TopSpeed.Domain.ViewModel;
 using TopSpeed.Infrastructure.Common;
 
-namespace TopSpeed.Web.Controllers
+
+namespace TopSpeed.Web.Areas.Admin.Controllers
 {
-    public class BrandController : Controller
+    [Area("Admin")]
+    public class PostController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BrandController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        public PostController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
@@ -22,18 +26,52 @@ namespace TopSpeed.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            List<Brand> brands = await _unitOfWork.Brand.GetAllAsync();
-            return View(brands);
+            List<Post> posts = await _unitOfWork.Post.GetAllPosts();
+            return View(posts);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            IEnumerable<SelectListItem> brandList = _unitOfWork.Brand.Query().Select(x => new SelectListItem
+            {
+                Text = x.Name.ToUpper(),
+                Value = x.Id.ToString()
+            });
+
+            IEnumerable<SelectListItem> VehicleTypeList = _unitOfWork.VehicleType.Query().Select(x => new SelectListItem
+            {
+                Text = x.Name.ToUpper(),
+                Value = x.Id.ToString()
+            });
+
+            IEnumerable<SelectListItem> engineAndFuelType = Enum.GetValues(typeof(EngineAndFuelType)).Cast<EngineAndFuelType>().Select(x => new SelectListItem
+            {
+                Text = x.ToString().ToUpper(),
+                Value = ((int)x).ToString()
+            });
+
+            IEnumerable<SelectListItem> transmission = Enum.GetValues(typeof(Transmission)).Cast<Transmission>().Select(x => new SelectListItem
+            {
+                Text = x.ToString().ToUpper(),
+                Value = ((int)x).ToString()
+            });
+
+            PostVM postVM = new PostVM
+            {
+                post = new Post(),
+                BrandList = brandList,
+                VehicleTypeList = VehicleTypeList,
+                EngineAndFuelTypeList=engineAndFuelType,
+                TransmissionList=transmission
+            };
+
+
+            return View(postVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Brand brand)
+        public async Task<IActionResult> Create(PostVM postVM)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
 
@@ -43,7 +81,7 @@ namespace TopSpeed.Web.Controllers
             {
                 string newFileName = Guid.NewGuid().ToString();
 
-                var upload = Path.Combine(webRootPath, @"images\brand");
+                var upload = Path.Combine(webRootPath, @"images\post");
 
                 var extension = Path.GetExtension(file[0].FileName);
 
@@ -51,12 +89,12 @@ namespace TopSpeed.Web.Controllers
                 {
                     file[0].CopyTo(filesStream);
                 }
-                brand.BrandLogo = @"\images\brand\"+newFileName+extension;
+                postVM.post.VehicleImage = @"\images\post\"+newFileName+extension;
             }
 
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Brand.Create(brand);
+                await _unitOfWork.Post.Create(postVM.post);
                 await _unitOfWork.SaveAsync();
 
                 TempData["success"] = CommonMessage.RecordCreated;
@@ -69,21 +107,21 @@ namespace TopSpeed.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            Brand brand= await _unitOfWork.Brand.GetByIdAsync(id);
+            Post post= await _unitOfWork.Post.GetByIdAsync(id);
 
-            return View(brand);
+            return View(post);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            Brand brand = await _unitOfWork.Brand.GetByIdAsync(id); 
+            Post post = await _unitOfWork.Post.GetByIdAsync(id); 
 
-            return View(brand);
+            return View(post);
         }
 
         [HttpPost]
-        public async Task <IActionResult> Edit(Brand brand)
+        public async Task <IActionResult> Edit(Post post)
         {
 
             string webRootPath = _webHostEnvironment.WebRootPath;
@@ -94,16 +132,16 @@ namespace TopSpeed.Web.Controllers
             {
                 string newFileName = Guid.NewGuid().ToString();
 
-                var upload = Path.Combine(webRootPath, @"images\brand");
+                var upload = Path.Combine(webRootPath, @"images\post");
 
                 var extension = Path.GetExtension(file[0].FileName);
 
                 //delete old image
-                var objFromDb = await _unitOfWork.Brand.GetByIdAsync(brand.Id);
+                var objFromDb = await _unitOfWork.Post.GetByIdAsync(post.Id);
 
-                if (objFromDb.BrandLogo!=null)
+                if (objFromDb.VehicleImage!=null)
                 {
-                    var oldImagePath = Path.Combine(webRootPath, objFromDb.BrandLogo.Trim('\\'));
+                    var oldImagePath = Path.Combine(webRootPath, objFromDb.VehicleImage.Trim('\\'));
 
                     if (System.IO.File.Exists(oldImagePath))
                     {
@@ -115,13 +153,13 @@ namespace TopSpeed.Web.Controllers
                 {
                     file[0].CopyTo(filesStream);
                 }
-                brand.BrandLogo = @"\images\brand\" + newFileName + extension;
+                post.VehicleImage = @"\images\post\" + newFileName + extension;
             }
 
 
             if (ModelState.IsValid)
             {
-                await _unitOfWork.Brand.Update(brand);
+                await _unitOfWork.Post.Update(post);
                 await _unitOfWork.SaveAsync();
 
                 TempData["warning"] = CommonMessage.RecordUpdated;
@@ -135,24 +173,24 @@ namespace TopSpeed.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
-            Brand brand = await _unitOfWork.Brand.GetByIdAsync(id);
+            Post post = await _unitOfWork.Post.GetByIdAsync(id);
 
-            return View(brand);
+            return View(post);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(Brand brand)
+        public async Task<IActionResult> Delete(Post post)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
 
-            if(!String.IsNullOrEmpty(brand.BrandLogo))
+            if(!string.IsNullOrEmpty(post.VehicleImage))
             {
                 //delete old image
-                var objFromDb = await _unitOfWork.Brand.GetByIdAsync(brand.Id);
+                var objFromDb = await _unitOfWork.Post.GetByIdAsync(post.Id);
 
-                if (objFromDb.BrandLogo != null)
+                if (objFromDb.VehicleImage != null)
                 {
-                    var oldImagePath = Path.Combine(webRootPath, objFromDb.BrandLogo.Trim('\\'));
+                    var oldImagePath = Path.Combine(webRootPath, objFromDb.VehicleImage.Trim('\\'));
 
                     if (System.IO.File.Exists(oldImagePath))
                     {
@@ -161,7 +199,7 @@ namespace TopSpeed.Web.Controllers
                 }
             }
 
-            await _unitOfWork.Brand.Delete(brand);
+            await _unitOfWork.Post.Delete(post);
             await _unitOfWork.SaveAsync();
            
 

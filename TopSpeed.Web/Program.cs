@@ -15,8 +15,41 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+#region Configuration for seeding Data to Database
+
+static async void UpdateDatabaseAsync(IHost host)
+{
+    using(var scope=host.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+
+        try
+        {
+            var context = services.GetRequiredService<ApplicationDbContext>();
+
+            if(context.Database.IsSqlServer())
+            {
+                context.Database.Migrate();
+            }
+
+            await SeedData.SeedDataAsync(context);
+        }
+
+        catch(Exception ex)
+        {
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex,"An error occurred while migrating or seeding the database."); 
+            
+        }
+    }
+}
+
+#endregion
+
 
 var app = builder.Build();
+
+UpdateDatabaseAsync(app);
 
 
 // Configure the HTTP request pipeline.
@@ -36,6 +69,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

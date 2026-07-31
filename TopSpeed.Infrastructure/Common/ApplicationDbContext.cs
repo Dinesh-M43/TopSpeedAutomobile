@@ -15,9 +15,9 @@ namespace TopSpeed.Infrastructure.Common
         }
         public DbSet<Brand> Brand { get; set; }
 
-        internal void SavingChangesAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public DbSet<VehicleType> VehicleType { get; set; }
+
+        public DbSet<Post> Post { get; set; }
+
     }
 }
