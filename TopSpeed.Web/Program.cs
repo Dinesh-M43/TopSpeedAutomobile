@@ -16,9 +16,7 @@ builder.Services.AddTransient(typeof(IGenericRepository<>),typeof(GenericReposit
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
-
 var app = builder.Build();
-
 
 
 // Configure the HTTP request pipeline.
