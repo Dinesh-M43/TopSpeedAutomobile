@@ -11,7 +11,7 @@ namespace TopSpeed.Domain.ViewModel
 {
     public class PostVM
     {
-        public Post post { get; set; }
+        public Post Post { get; set; }
 
         [ValidateNever]
         public IEnumerable<SelectListItem> BrandList { get; set; }

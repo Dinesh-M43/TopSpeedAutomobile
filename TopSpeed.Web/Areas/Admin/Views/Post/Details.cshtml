@@ -1,0 +1,199 @@
+﻿@using TopSpeed.Domain.ApplicationEnums
+@model Post
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header text-center text-uppercase">
+            Post Details
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+
+                <!-- Left Side -->
+                <div class="col-md-8">
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Id</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.Id
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Name</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.Name
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Brand</strong>
+                        </div>
+                        <div class="col-md-8">                            
+                            : @Model.Brand.Name
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Vehicle Type</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.VehicleType.Name
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Engine / Fuel Type</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @((EngineAndFuelType)Model.EngineAndFuelType).EngineAndFuelType
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Transmission</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @((EngineAndFuelType)Model.Transmission).Transmission
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Engine</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.Engine
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Top Speed</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.TopSpeed
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Mileage</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.Mileage
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Range</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.Range
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Seating Capacity</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.SeatingCapacity
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Base Price</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.PriceForm
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Top-End Model</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.PriceTo
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Ratings</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @Model.Ratings
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Created On</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @((Model.CreatedOn == DateTime.MinValue) ? "NA" : Model.CreatedOn.ToString())
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Created By</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @((Model.CreatedBy == String.Empty) ? "NA" : Model.CreatedBy)
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Modified On</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @((Model.ModifiedOn == DateTime.MinValue) ? "NA" : Model.ModifiedOn.ToString())
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <strong class="text-uppercase">Modified By</strong>
+                        </div>
+                        <div class="col-md-8">
+                            : @((Model.ModifiedBy == String.Empty) ? "NA" : Model.ModifiedBy)
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Side -->
+                <div class="col-md-4 text-center">
+                    <img src="@Model.VehicleImage"
+                         class="img-fluid"
+                         style="max-height:250px;"
+                         alt="Brand Logo" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a asp-area="Admin" asp-controller="Post" asp-action="Index" class="btn btn-danger">Back</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
